@@ -66,7 +66,11 @@ module Vlad
       :scm    => :subversion,
       :web    => :apache,
     }.merge(options)
-
+    
+    # be sure core comes first so base tasks aren't clobbered
+    if core = recipes.delete(:core)
+      require "vlad/#{core}"
+    end
     recipes.each do |flavor, recipe|
       next if recipe.nil? or flavor == :config
       require "vlad/#{recipe}"
