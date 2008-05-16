@@ -63,8 +63,8 @@ module Vlad
       :app    => :mongrel,
       :config => 'config/deploy.rb',
       :core   => :core,
-      :scm    => :subversion,
-      :web    => :apache,
+      :scm    => :git,
+      :web    => :nginx,
     }.merge(options)
     
     # be sure core comes first so base tasks aren't clobbered
