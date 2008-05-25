@@ -1,0 +1,45 @@
+# Author:IceskYsl@1sters!
+# Blog:http://iceskysl.1sters.com
+# Email:Iceskysl@gmail.com
+# Date:2008.05.24
+
+== How to generate configs via rake
+
+=== Generate Vlad Deploy.rb file
+1. view rake task list...
+$rake -T
+.....
+.....
+rake vlad:cleanup                    # Clean up old releases.
+rake vlad:config:apache_mogrel       # Config mogrel and apache app server.
+rake vlad:config:apache_thin         # Config thin and apache app server.
+rake vlad:config:nginx_mogrel_git    # Config mogrel and nginx app server v...
+rake vlad:config:nginx_mogrel_svn    # Config mogrel and nginx app server.
+rake vlad:config:nginx_thin          # Config thin and nginx app server.
+rake vlad:config_nginx               # Config Nginx servers with mogrels,an...
+rake vlad:debug                      # Show the vlad setup.
+rake vlad:deploy                     # Runs vlad:update, vlad:symlink, vlad...
+rake vlad:invoke                     # Invoke a single command on every rem...
+rake vlad:migrate                    # Run the migrate rake task for the th...
+rake vlad:restart_web                # ReStart the web servers
+rake vlad:rollback                   # Rolls back to a previous version and...
+rake vlad:setup                      # Setup your servers.
+rake vlad:setup_app                  # Prepares application servers for dep...
+rake vlad:start                      # (Re)Start the web and app servers
+rake vlad:start_app                  # Restart the app servers
+rake vlad:start_web                  # Start the web servers
+rake vlad:stop                       # Stop the web and app servers
+rake vlad:stop_app                   # Stop the app servers
+rake vlad:stop_web                   # Stop the web servers
+rake vlad:symlink                    # Symlinks your custom directories
+rake vlad:update                     # Updates your application server to t...
+
+2.generate deploy.rb for vlad
+use rake vlad:config:xxxx to generate xxx deploy.rb configs template files,such as:
+rake vlad:config:nginx_mogrel_git  --> To generate deploy.rb for nginx and mogrel server ,and scm is git...
+
+3.generate web server config files
+rake vlad:config_nginx  ---> To generate nginx config file ,and upload it onto server
+
+4.anything else?
+same to before....
