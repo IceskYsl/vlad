@@ -2,7 +2,7 @@ require 'vlad'
 
 namespace :vlad do
   ##
-  # Nginx web server on Gentoo
+  # Nginx web server on Gentoo/Debian init.d systems
 
   set :web_command, "/etc/init.d/nginx"
 
