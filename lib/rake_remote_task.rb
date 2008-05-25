@@ -187,11 +187,16 @@ class Rake::RemoteTask < Rake::Task
 
   def run command
     cmd = [ssh_cmd, ssh_flags, target_host, command].compact
+    puts "cmd=#{cmd.join(' ')}"
     result = []
 
     warn cmd.join(' ') if $TRACE
 
     pid, inn, out, err = popen4(*cmd)
+    puts "pid=#{pid }"
+    puts "inn=#{inn.to_s}"
+    puts "out=#{out.to_s}"
+    puts "err=#{err.to_s}"
 
     inn.sync   = true
     streams    = [out, err]
@@ -199,6 +204,8 @@ class Rake::RemoteTask < Rake::Task
       out => $stdout,
       err => $stderr,
     }
+    
+    puts "out_stream=#{out_stream}"
 
     # Handle process termination ourselves
     status = nil
@@ -212,16 +219,19 @@ class Rake::RemoteTask < Rake::Task
 
       next if selected.nil? or selected.empty?
 
+      puts "selected=#{selected}"
       selected.each do |stream|
+        puts "stream=#{stream}"
         if stream.eof? then
           streams.delete stream if status # we've quit, so no more writing
           next
         end
 
         data = stream.readpartial(1024)
+        puts "data=#{data}"
         out_stream[stream].write data
 
-        if stream == err and data =~ /^Password:/ then
+        if stream == err and data =~ /Password:/i then
           inn.puts sudo_password
           data << "\n"
           $stderr.write "\n"

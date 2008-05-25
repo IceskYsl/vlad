@@ -64,7 +64,7 @@ module Vlad
       :config => 'config/deploy.rb',
       :core   => :core,
       :scm    => :subversion,
-      :web    => :apache,
+      :web    => :nginx,
     }.merge(options)
     
     # be sure core comes first so base tasks aren't clobbered
@@ -89,3 +89,5 @@ class String #:nodoc:
     end
   end
 end
+
+

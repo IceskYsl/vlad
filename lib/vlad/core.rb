@@ -7,6 +7,52 @@ def now
 end
 
 namespace :vlad do
+
+  #This is the namespace for config deploy.rb for you apps
+  namespace :config do
+    VLAD_ROOT = File.dirname(__FILE__) + '/../../'
+    RAILS_CONFIG_ROOT = RAILS_ROOT + '/config/'
+    #Cope config file to RAILS_ROOT/config/deploy.rb
+    def cp_rename_deploy(src)
+      puts "VLAD_ROOT = #{VLAD_ROOT}"
+      puts "RAILS_CONFIG_ROOT=#{RAILS_CONFIG_ROOT}"
+      FileUtils.cp  VLAD_ROOT+'conf/'+"#{src}.rb", RAILS_CONFIG_ROOT+'deploy.rb'
+    end
+    #Config mogre & nginx server for apps ,and dump it to deploy.rb in config .
+    desc "Config mogrel and nginx app server.".cleanup
+    task :nginx_mogrel_svn do
+      puts "i will config mogrel and nginx"
+      cp_rename_deploy("nginx_mogrel_svn")
+    end
+    
+    #Config mogre & nginx server for apps ,and dump it to deploy.rb in config .
+    desc "Config mogrel and nginx app server via git.".cleanup
+    task :nginx_mogrel_git do
+      puts "i will config mogrel and nginx via git"
+      cp_rename_deploy("nginx_mogrel_git")
+    end
+    
+    #Config mogre & nginx server for apps ,and dump it to deploy.rb in config .
+    desc "Config thin and nginx app server.".cleanup
+    task :nginx_thin do
+      puts "i will config thin and nginx"
+    end
+    
+    #Config mogre & apache server for apps ,and dump it to deploy.rb in config .
+    desc "Config mogrel and apache app server.".cleanup
+    task :apache_mogrel do
+      puts "i will config mogrel and apache"
+    end
+    
+    #Config thin & apache server for apps ,and dump it to deploy.rb in config .
+    desc "Config thin and apache app server.".cleanup
+    task :apache_thin do
+      puts "i will config thin and apache"
+    end
+ 
+  end
+
+  
   desc "Show the vlad setup.  This is all the default variables for vlad
     tasks.".cleanup
 
@@ -53,15 +99,15 @@ namespace :vlad do
     symlink = false
     begin
       run [ "cd #{scm_path}",
-            "#{source.checkout revision, '.'}",
-            "#{source.export ".", release_path}",
-            "chmod -R g+w #{latest_release}",
-            "rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids",
-            "mkdir -p #{latest_release}/db #{latest_release}/tmp",
-            "ln -s #{shared_path}/log #{latest_release}/log",
-            "ln -s #{shared_path}/system #{latest_release}/public/system",
-            "ln -s #{shared_path}/pids #{latest_release}/tmp/pids",
-          ].join(" && ")
+        "#{source.checkout revision, '.'}",
+        "#{source.export ".", release_path}",
+        "chmod -R g+w #{latest_release}",
+        "rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids",
+        "mkdir -p #{latest_release}/db #{latest_release}/tmp",
+        "ln -s #{shared_path}/log #{latest_release}/log",
+        "ln -s #{shared_path}/system #{latest_release}/public/system",
+        "ln -s #{shared_path}/pids #{latest_release}/tmp/pids",
+      ].join(" && ")
 
       symlink = true
       run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}"
@@ -69,7 +115,7 @@ namespace :vlad do
       run "echo #{now} $USER #{revision} #{File.basename release_path} >> #{deploy_to}/revisions.log"
     rescue => e
       run "rm -f #{current_path} && ln -s #{previous_release} #{current_path}" if
-        symlink
+      symlink
       run "rm -rf #{release_path}"
       raise e
     end
@@ -86,10 +132,10 @@ namespace :vlad do
     break unless target_host == Rake::RemoteTask.hosts_for(:app).first
 
     directory = case migrate_target.to_sym
-                when :current then current_path
-                when :latest  then current_release
-                else raise ArgumentError, "unknown migration target #{migrate_target.inspect}"
-                end
+    when :current then current_path
+    when :latest  then current_release
+    else raise ArgumentError, "unknown migration target #{migrate_target.inspect}"
+    end
 
     run "cd #{current_path}; #{rake_cmd} RAILS_ENV=#{rails_env} db:migrate #{migrate_args}"
   end

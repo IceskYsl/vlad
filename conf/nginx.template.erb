@@ -1,0 +1,51 @@
+# File generated on <%=Time.now().strftime("%d %b %y")%>
+
+#upstream name has to be unique so add on the port number
+
+<%upstream="mongrels_#{mongrel_port}"%> 
+
+#generate multiple mongrels
+upstream <%=upstream %>{
+    <%mongrel_servers.times do |n| %>
+        server 127.0.0.1:<%=n+mongrel_port%>;
+    <% end %>
+    }
+
+# Redirect http://domain to http://www.domain
+
+server {
+            listen   80;
+            server_name  <%=domain %> ;
+            rewrite ^/(.*) http://www.<%=domain %> permanent;
+           }
+
+server {
+            listen   80;
+            server_name www.<%=domain %>;
+
+            access_log <%=deploy_to%>/shared/log/access.log;
+            error_log  <%=deploy_to%>/shared/log/error.log;
+
+            root   <%=deploy_to%>/current/public/;
+            index  index.html;
+
+            location / {
+                   proxy_set_header  X-Real-IP  $remote_addr;
+                   proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+                   proxy_set_header Host $http_host;
+                   proxy_redirect false;
+
+                   if (-f $request_filename/index.html) {
+                                           rewrite (.*) $1/index.html break;
+                          }
+                          if (-f $request_filename.html) {
+                                           rewrite (.*) $1.html break;
+                          }
+
+                          if (!-f $request_filename) {
+                                           proxy_pass http://<%=upstream %>;
+                                           break;
+                          }
+            }
+
+}
