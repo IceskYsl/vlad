@@ -1,14 +1,14 @@
 #
 # General configuration
 #
-set :user, "taojer"
-set :ssh_flags,             '-p 22'
+set :user, "you_ssh_name"
+set :ssh_flags,    '-p 22'
 set :sudo_cmd, 'sudo'
-set :sudo_password, 'taojer123'
-set :application,           '1stlog'
-set :domain,                '1stlog.1sters.com'
-set :deploy_to,             '/home/taojer/webroot/ror/1stlog'
-set :repository,            'git@github.com:IceskYsl/1stlog.git'
+set :sudo_password, 'you_sudo_password'
+set :application,   'yourapp'
+set :domain, 'www.youdomain.com'
+set :deploy_to,    '/home/www/webroot/youdomain'
+set :repository,    'http://you_svn_url'
 set :scm,         "svn"
 
 #Config web app

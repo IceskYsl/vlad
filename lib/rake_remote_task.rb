@@ -160,8 +160,8 @@ class Rake::RemoteTask < Rake::Task
 
   def execute(args = nil)
     raise(Vlad::ConfigurationError,
-          "No target hosts specified for task: #{self.name}") if
-      target_hosts.empty?
+      "No target hosts specified for task: #{self.name}") if
+    target_hosts.empty?
 
     super args
 
@@ -193,10 +193,10 @@ class Rake::RemoteTask < Rake::Task
     warn cmd.join(' ') if $TRACE
 
     pid, inn, out, err = popen4(*cmd)
-    puts "pid=#{pid }"
-    puts "inn=#{inn.to_s}"
-    puts "out=#{out.to_s}"
-    puts "err=#{err.to_s}"
+    #    puts "pid=#{pid }"
+    #    puts "inn=#{inn.to_s}"
+    #    puts "out=#{out.to_s}"
+    #    puts "err=#{err.to_s}"
 
     inn.sync   = true
     streams    = [out, err]
@@ -205,7 +205,7 @@ class Rake::RemoteTask < Rake::Task
       err => $stderr,
     }
     
-    puts "out_stream=#{out_stream}"
+    #    puts "out_stream=#{out_stream}"
 
     # Handle process termination ourselves
     status = nil
@@ -219,19 +219,21 @@ class Rake::RemoteTask < Rake::Task
 
       next if selected.nil? or selected.empty?
 
-      puts "selected=#{selected}"
+      #      puts "selected=#{selected}"
       selected.each do |stream|
-        puts "stream=#{stream}"
+        #        puts "stream=#{stream}"
         if stream.eof? then
           streams.delete stream if status # we've quit, so no more writing
           next
         end
 
         data = stream.readpartial(1024)
-        puts "data=#{data}"
+        #        puts "data=#{data}"
+        #        puts "err=#{err.to_s}"
         out_stream[stream].write data
-
-        if stream == err and data =~ /Password:/i then
+        #        if stream == err and data =~ /^Password/ then
+        # Change this to suit other OS,such as UBuntu([sudo]passwoed for username:)
+        if stream == err and data =~ /password/i then
           inn.puts sudo_password
           data << "\n"
           $stderr.write "\n"
@@ -243,7 +245,7 @@ class Rake::RemoteTask < Rake::Task
 
     unless status.success? then
       raise(Vlad::CommandFailedError,
-            "execution failed with status #{status.exitstatus}: #{cmd.join ' '}")
+        "execution failed with status #{status.exitstatus}: #{cmd.join ' '}")
     end
 
     result.join
@@ -323,7 +325,7 @@ class Rake::RemoteTask < Rake::Task
   def self.mandatory name, desc # :nodoc:
     self.set(name) do
       raise(Vlad::ConfigurationError,
-            "Please specify the #{desc} via the #{name.inspect} variable")
+        "Please specify the #{desc} via the #{name.inspect} variable")
     end
   end
 
@@ -399,9 +401,9 @@ class Rake::RemoteTask < Rake::Task
 
   def self.set name, value = nil, &default_block
     raise ArgumentError, "cannot provide both a value and a block" if
-      value and default_block
+    value and default_block
     raise ArgumentError, "cannot set reserved name: '#{name}'" if
-      Rake::RemoteTask.reserved_name?(name) unless $TESTING
+    Rake::RemoteTask.reserved_name?(name) unless $TESTING
 
     Rake::RemoteTask.default_env[name.to_s] = Rake::RemoteTask.env[name.to_s] =
       value || default_block
@@ -424,19 +426,19 @@ class Rake::RemoteTask < Rake::Task
     mandatory :domain,     "server domain"
 
     simple_set(:deploy_timestamped, true,
-               :deploy_via,         :export,
-               :keep_releases,      5,
-               :migrate_args,       "",
-               :migrate_target,     :latest,
-               :rails_env,          "production",
-               :rake_cmd,           "rake",
-               :revision,           "head",
-               :rsync_cmd,          "rsync",
-               :rsync_flags,        ['-azP', '--delete'],
-               :ssh_cmd,            "ssh",
-               :ssh_flags,          nil,
-               :sudo_cmd,           "sudo",
-               :sudo_flags,         nil)
+      :deploy_via,         :export,
+      :keep_releases,      5,
+      :migrate_args,       "",
+      :migrate_target,     :latest,
+      :rails_env,          "production",
+      :rake_cmd,           "rake",
+      :revision,           "head",
+      :rsync_cmd,          "rsync",
+      :rsync_flags,        ['-azP', '--delete'],
+      :ssh_cmd,            "ssh",
+      :ssh_flags,          nil,
+      :sudo_cmd,           "sudo",
+      :sudo_flags,         nil)
 
     set(:current_release)    { File.join(releases_path, releases[-1]) }
     set(:latest_release)     { deploy_timestamped ?release_path: current_release }

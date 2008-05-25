@@ -16,8 +16,10 @@ namespace :vlad do
     def cp_rename_deploy(src)
       puts "VLAD_ROOT = #{VLAD_ROOT}"
       puts "RAILS_CONFIG_ROOT=#{RAILS_CONFIG_ROOT}"
+      puts "src = #{src}"
       FileUtils.cp  VLAD_ROOT+'conf/'+"#{src}.rb", RAILS_CONFIG_ROOT+'deploy.rb'
     end
+    
     #Config mogre & nginx server for apps ,and dump it to deploy.rb in config .
     desc "Config mogrel and nginx app server.".cleanup
     task :nginx_mogrel_svn do
