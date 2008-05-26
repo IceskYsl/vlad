@@ -1,3 +1,4 @@
+ 
 # 
 # Author:IceskYsl@1sters!
 # Blog:http://iceskysl.1sters.com
@@ -11,12 +12,13 @@
 #+stop_web+: stop nginx web server..
 #+restart_web+: restart(stop && start)nginx web server...
 
-
+ 
 require 'vlad'
 
 namespace :vlad do
+ 
   #  VLAD_ROOT = File.dirname(__FILE__) + '/../../'
-  ##
+ 
   # Nginx app server
   set :nginx_sites_available, "/etc/nginx/sites-available"
   set :nginx_sites_enabled, "/etc/nginx/sites-enabled"
@@ -25,7 +27,10 @@ namespace :vlad do
   def sudo(command)
     run [sudo_cmd, sudo_flags, command].join(' ')
   end
+ 
+  # Nginx web server on Gentoo/Debian init.d systems
 
+ 
   # iceskysl@IceskYsl:/opt/dev/1stlog$ rake vlad:start_web --trace
   #(in /opt/dev/1stlog)
   #** Invoke vlad:start_web (first_time)
@@ -39,6 +44,7 @@ namespace :vlad do
     sudo  "#{nginx_command} start"
   end
 
+ 
 
   #iceskysl@IceskYsl:/opt/dev/1stlog$ rake vlad:stop_web --trace
   #(in /opt/dev/1stlog)
@@ -48,9 +54,11 @@ namespace :vlad do
   #taojer@1stlog.1sters.com's password: 
   #Stopping nginx: nginx.
   desc "Stop the web servers"
+
   remote_task :stop_web, :roles => :web  do
     sudo " #{nginx_command} stop"
   end
+
   
   
   desc "ReStart the web servers"
@@ -59,12 +67,11 @@ namespace :vlad do
     Rake::Task['vlad:start_web'].invoke
   end
   
-  
+ 
   ##
   # Everything HTTP.
 
   desc "(Re)Start the web and app servers"
-
   remote_task :start do
     Rake::Task['vlad:start_app'].invoke
     Rake::Task['vlad:start_web'].invoke
@@ -76,6 +83,7 @@ namespace :vlad do
     Rake::Task['vlad:stop_app'].invoke
     Rake::Task['vlad:stop_web'].invoke
   end
+ 
   
   desc "Config Nginx servers with mogrels,and generate nginx config file ,then upload to server.."
   remote_task :config_nginx, :roles => :app do
@@ -123,6 +131,8 @@ namespace :vlad do
   end
 
   
+ 
 end
+ 
 
-
+ 
