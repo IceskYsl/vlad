@@ -109,6 +109,8 @@ namespace :vlad do
         "ln -s #{shared_path}/log #{latest_release}/log",
         "ln -s #{shared_path}/system #{latest_release}/public/system",
         "ln -s #{shared_path}/pids #{latest_release}/tmp/pids",
+        #Add By IceskYsl At 2008.05.27
+        "ln -s #{shared_path}/config/database.yml #{latest_release}/config/database.yml",
       ].join(" && ")
 
       symlink = true
